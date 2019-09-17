@@ -24,6 +24,9 @@ public:
 	float stringHeight(const std::string& s);
 	ofRectangle getStringBoundingBox(const string &s, float x, float y);
 
+	// custom function
+	vector<ofRectangle> getStringSymbolsBoundingBoxes(const string &s, float x, float y, bool needJoin = false);
+
 	void drawString(const string &s, float x, float y);
 };
 
