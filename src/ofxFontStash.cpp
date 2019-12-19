@@ -31,7 +31,7 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize) {
 
 	font = fonsAddFont(fs, "font", ofToDataPath(filename).c_str());
 	if (font == FONS_INVALID) {
-		printf("Could not add font normal.\n");
+		printf("Error loading font (might be a wrong filename).\n");
 		return;
 	}
 
