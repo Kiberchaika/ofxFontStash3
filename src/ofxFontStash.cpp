@@ -12,7 +12,7 @@ extern "C" {
 
 void ofxFontStash::cleanup() {
 	if (fs != NULL) {
-		fonsDeleteInternal(fs);
+		glfonsDelete(fs);
 		fs = NULL;
 	}
 }
@@ -23,6 +23,15 @@ ofxFontStash::ofxFontStash(){
 
 ofxFontStash::~ofxFontStash(){
 	cleanup();
+}
+
+ofxFontStash & ofxFontStash::operator=(const ofxFontStash & obj) {
+	if (this != &obj) {
+		cleanup();
+		font = obj.font;
+		fs = obj.fs;
+	}
+	return *this;
 }
 
 void ofxFontStash::load(const filesystem::path & filename, float fontsize) {

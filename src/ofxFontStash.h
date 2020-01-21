@@ -19,6 +19,8 @@ public:
     ofxFontStash();
     ~ofxFontStash();
     
+	ofxFontStash& operator=(const ofxFontStash& obj);
+	
 	void load(const filesystem::path &filename, float fontsize);
 
 	float getLineHeight();
