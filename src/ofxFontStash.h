@@ -11,7 +11,9 @@ extern "C" {
 class ofxFontStash {
     int font = FONS_INVALID;
     FONScontext* fs = NULL;
-    
+   
+	void cleanup();
+
 public:
     
     ofxFontStash();
@@ -28,6 +30,9 @@ public:
 	vector<ofRectangle> getStringSymbolsBoundingBoxes(const string &s, float x, float y, bool needJoin = false);
 
 	void drawString(const string &s, float x, float y);
+
+	/// static C error handler
+	static void stashError(void* uptr, int error, int val);
 };
 
 #endif

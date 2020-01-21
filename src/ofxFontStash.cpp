@@ -3,9 +3,18 @@
 #define FONTSTASH_IMPLEMENTATION
 #define GLFONTSTASH_IMPLEMENTATION
 
+#define ATLAS_MAX_SIZE 4096
+
 extern "C" {
 #include "fontstash.h"
 #include "offontstash.h"
+}
+
+void ofxFontStash::cleanup() {
+	if (fs != NULL) {
+		fonsDeleteInternal(fs);
+		fs = NULL;
+	}
 }
 
 ofxFontStash::ofxFontStash(){
@@ -13,15 +22,14 @@ ofxFontStash::ofxFontStash(){
 }
 
 ofxFontStash::~ofxFontStash(){
-	if (fs != NULL) {
-		fonsDeleteInternal(fs);
-		fs = NULL;
-	}
+	cleanup();
 }
 
 void ofxFontStash::load(const filesystem::path & filename, float fontsize) {
 	bool bUseArb = ofGetUsingArbTex();
 	ofDisableArbTex();
+
+	cleanup();
 
 	fs = glfonsCreate(2048, 2048, FONS_ZERO_TOPLEFT);
 	if (fs == NULL) {
@@ -176,3 +184,29 @@ void ofxFontStash::drawString(const string & s, float x, float y) {
 	}
 }
 
+void ofxFontStash::stashError(void* ptr, int error, int val) {
+	FONScontext* context = (FONScontext*)ptr;
+	switch (error) {
+	case FONS_ATLAS_FULL: {
+		ofLogWarning("ofxFontStash") << "font atlas texture full, expanding";
+		int width, height;
+		fonsGetAtlasSize(context, &width, &height);
+		if (width <= ATLAS_MAX_SIZE && height <= ATLAS_MAX_SIZE) {
+			fonsExpandAtlas(context, width * 2, height * 2);
+		}
+		else {
+			ofLogError("ofxFontStash") << "couldn't expand atlas more than " << ATLAS_MAX_SIZE;
+		}
+		break;
+	}
+	case FONS_SCRATCH_FULL:
+		ofLogError("ofxFontStash") << "scratch full, tried to allocate " << val << " has " << FONS_SCRATCH_BUF_SIZE;
+		break;
+	case FONS_STATES_OVERFLOW:
+		ofLogError("ofxFontStash") << "state overflow";
+		break;
+	case FONS_STATES_UNDERFLOW:
+		ofLogError("ofxFontStash") << "state underflow";
+		break;
+	}
+}
