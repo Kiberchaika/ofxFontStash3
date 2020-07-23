@@ -34,35 +34,37 @@ ofxFontStash & ofxFontStash::operator=(const ofxFontStash & obj) {
 	return *this;
 }
 
-void ofxFontStash::load(const filesystem::path & filename, float fontsize) {
-	bool bUseArb = ofGetUsingArbTex();
-	ofDisableArbTex();
-
-	cleanup();
-
-	fs = glfonsCreate(2048, 2048, FONS_ZERO_TOPLEFT);
-	if (fs == NULL) {
-		printf("Could not create stash.\n");
-		return;
-	}
-
-	font = fonsAddFont(fs, "font", ofToDataPath(filename).c_str());
-	if (font == FONS_INVALID) {
-		printf("Error loading font (might be a wrong filename).\n");
-		return;
-	}
-
-	fonsClearState(fs);
-	fonsSetFont(fs, font);
-	fonsSetSize(fs, 1.6 * fontsize);
-	fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
-	
-	//fonsSetColor(fs, white);
-	//fonsSetSpacing(fs, 5.0f);
-	//fonsSetBlur(fs, 10.0f);
-
-	bUseArb ? ofEnableArbTex() : ofDisableArbTex();
+void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool isAbsolutePath) {
+    bool bUseArb = ofGetUsingArbTex();
+    ofDisableArbTex();
+    
+    cleanup();
+    
+    fs = glfonsCreate(2048, 2048, FONS_ZERO_TOPLEFT);
+    if (fs == NULL) {
+        printf("Could not create stash.\n");
+        return;
+    }
+    
+    string path = isAbsolutePath ? filename.string() : ofToDataPath(filename);
+    font = fonsAddFont(fs, "font", path.c_str());
+    if (font == FONS_INVALID) {
+        printf("Error loading font (might be a wrong filename): %s\n",path.c_str());
+        return;
+    }
+    
+    fonsClearState(fs);
+    fonsSetFont(fs, font);
+    fonsSetSize(fs, 1.6 * fontsize);
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
+    
+    //fonsSetColor(fs, white);
+    //fonsSetSpacing(fs, 5.0f);
+    //fonsSetBlur(fs, 10.0f);
+    
+    bUseArb ? ofEnableArbTex() : ofDisableArbTex();
 }
+
 
 float ofxFontStash::getLineHeight() {
 	float lh = 0;
