@@ -55,7 +55,7 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
 
 #ifdef MURKA_OF
 	GLFONScontext* context = (GLFONScontext*)fs->params.userPtr;
-	context->renderer = (MurkaRenderer*)renderer;
+	context->renderer = (MurkaRendererBase*)renderer;
 #endif
 
     string path = isAbsolutePath ? filename.string() : ofToDataPath(filename);

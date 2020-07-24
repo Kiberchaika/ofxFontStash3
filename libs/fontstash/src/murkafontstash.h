@@ -9,12 +9,10 @@ unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsig
 #endif
 
 #ifdef MURKAFONTSTASH_IMPLEMENTATION
-#include "MurkaRenderer.h"
-#include "MurImage.h"
-#include "MurVbo.h"
+#include "MurkaRendererBase.h"
 
 struct GLFONScontext {
-	MurkaRenderer* renderer = nullptr; 
+	MurkaRendererBase* renderer = nullptr;
 	MurImage* img = nullptr;
 	MurVbo* vbo = nullptr;
 	int width, height;
