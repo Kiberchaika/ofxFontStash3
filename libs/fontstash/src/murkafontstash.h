@@ -89,8 +89,8 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 	return;
 	*/
 
-	ofFillFlag flag = ofGetFill();
-	ofFill();
+	context->renderer->pushStyle();
+	context->renderer->enableFill();
 	
 	context->renderer->bind(*(context->img));
 
@@ -109,7 +109,7 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 	context->renderer->drawVbo(*(context->vbo), GL_TRIANGLES, 0, nverts);
 
 	context->renderer->unbind(*(context->img));
-	flag ? context->renderer->enableFill() : context->renderer->disableFill();
+	context->renderer->popStyle();
 }
 
 static void glfons__renderDelete(void* userPtr)
