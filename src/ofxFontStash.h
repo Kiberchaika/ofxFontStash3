@@ -5,8 +5,15 @@
 
 extern "C" {
 #include "fontstash.h"
+}
+
+#ifdef MURKA_OF
+#include "murkafontstash.h"
+#else 
+extern "C" {
 #include "offontstash.h"
 }
+#endif
 
 class ofxFontStash {
     int font = FONS_INVALID;
@@ -21,7 +28,7 @@ public:
     
 	ofxFontStash& operator=(const ofxFontStash& obj);
 	
-    void load(const filesystem::path &filename, float fontsize, bool isAbsolutePath = false);
+    void load(const filesystem::path &filename, float fontsize, bool isAbsolutePath = false, void* renderer = nullptr);
 
 	float getLineHeight();
 	float stringWidth(const std::string& s);

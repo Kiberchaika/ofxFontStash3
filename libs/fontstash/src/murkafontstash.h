@@ -1,5 +1,5 @@
-#ifndef OFFONTSTASH_H
-#define OFFONTSTASH_H
+#ifndef MURKAFONTSTASH_H
+#define MURKAFONTSTASH_H
 
 FONScontext* glfonsCreate(int width, int height, int flags);
 void glfonsDelete(FONScontext* ctx);
@@ -8,12 +8,15 @@ unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsig
 
 #endif
 
-#ifdef OFFONTSTASH_IMPLEMENTATION
-#include "ofMain.h"
+#ifdef MURKAFONTSTASH_IMPLEMENTATION
+#include "MurkaRenderer.h"
+#include "MurImage.h"
+#include "MurVbo.h"
 
 struct GLFONScontext {
-	ofImage* img;
-	ofVbo* vbo;
+	MurkaRenderer* renderer = nullptr; 
+	MurImage* img = nullptr;
+	MurVbo* vbo = nullptr;
 	int width, height;
 };
 typedef struct GLFONScontext GLFONScontext;
@@ -35,10 +38,10 @@ static int glfons__renderCreate(void* userPtr, int width, int height)
 	context->width = width;
 	context->height = height;
 
-	context->img = new ofImage();
-	context->img->allocate(width, height, OF_IMAGE_COLOR_ALPHA);
+	context->img = new MurImage();
+	context->img->allocate(width, height);
 	
-	context->vbo = new ofVbo();
+	context->vbo = new MurVbo();
 	
 	return 1;
 }
@@ -59,7 +62,7 @@ static void glfons__renderUpdate(void* userPtr, int* rect, const unsigned char* 
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			context->img->setColor(x + rect[0], y + rect[1], ofColor(255, data[(rect[1] + y) * context->width + (rect[0] + x)]));
+			context->img->setColor(x + rect[0], y + rect[1], MurkaColor(1.0, 1.0, 1.0, float(data[(rect[1] + y) * context->width + (rect[0] + x)] ) / 255));
 		}
 	}
 
@@ -90,10 +93,11 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 
 	ofFillFlag flag = ofGetFill();
 	ofFill();
-	context->img->bind();
+	
+	context->renderer->bind(*(context->img));
 
-	context->vbo->setVertexData((glm::vec2*)verts, nverts, GL_DYNAMIC_DRAW);
-	context->vbo->setTexCoordData(tcoords, nverts, GL_DYNAMIC_DRAW);
+	context->vbo->setVertexData((MurkaPoint*)verts, nverts, GL_DYNAMIC_DRAW);
+	context->vbo->setTexCoordData((MurkaPoint*)tcoords, nverts, GL_DYNAMIC_DRAW);
 	/*
 	vector<ofFloatColor> col;
 	col.resize(nverts);
@@ -104,10 +108,10 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 	context->vbo->setColorData(col.data(), nverts, GL_DYNAMIC_DRAW);
 	*/
 
-	context->vbo->draw(GL_TRIANGLES, 0, nverts);
+	context->renderer->drawVbo(*(context->vbo), GL_TRIANGLES, 0, nverts);
 
-	context->img->unbind();
-	flag ? ofFill() : ofNoFill();
+	context->renderer->unbind(*(context->img));
+	flag ? context->renderer->enableFill() : context->renderer->disableFill();
 }
 
 static void glfons__renderDelete(void* userPtr)

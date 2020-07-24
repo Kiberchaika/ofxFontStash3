@@ -1,14 +1,21 @@
 #include "ofxFontStash.h"
 
 #define FONTSTASH_IMPLEMENTATION
-#define GLFONTSTASH_IMPLEMENTATION
-
-#define ATLAS_MAX_SIZE 4096
-
 extern "C" {
 #include "fontstash.h"
+}
+
+#ifdef MURKA_OF
+#define MURKAFONTSTASH_IMPLEMENTATION
+#include "murkafontstash.h"
+#else 
+#define OFFONTSTASH_IMPLEMENTATION
+extern "C" {
 #include "offontstash.h"
 }
+#endif
+
+#define ATLAS_MAX_SIZE 4096
 
 void ofxFontStash::cleanup() {
 	if (fs != NULL) {
@@ -34,7 +41,7 @@ ofxFontStash & ofxFontStash::operator=(const ofxFontStash & obj) {
 	return *this;
 }
 
-void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool isAbsolutePath) {
+void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool isAbsolutePath, void* renderer) {
     bool bUseArb = ofGetUsingArbTex();
     ofDisableArbTex();
     
@@ -45,7 +52,12 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
         printf("Could not create stash.\n");
         return;
     }
-    
+
+#ifdef MURKA_OF
+	GLFONScontext* context = (GLFONScontext*)fs->params.userPtr;
+	context->renderer = (MurkaRenderer*)renderer;
+#endif
+
     string path = isAbsolutePath ? filename.string() : ofToDataPath(filename);
     font = fonsAddFont(fs, "font", path.c_str());
     if (font == FONS_INVALID) {

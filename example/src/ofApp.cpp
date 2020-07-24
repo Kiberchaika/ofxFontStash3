@@ -9,10 +9,10 @@ void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofBackground(22, 22, 22, 255);
 
-	fontNormal.setup("Vera.ttf", 24);
-	fontItalic.setup("VeraMono-Bold.ttf", 48);
-	fontBold.setup("VeraMono-Bold.ttf", 48);
-	fontJapanese.setup("Arial Unicode.ttf", 48);
+	fontNormal.load("Vera.ttf", 24);
+	fontItalic.load("VeraMono-Bold.ttf", 48);
+	fontBold.load("VeraMono-Bold.ttf", 48);
+	fontJapanese.load("Arial Unicode.ttf", 48);
 
 
 }
@@ -28,14 +28,14 @@ void ofApp::draw() {
 	
 	float dx = 10, dy = 10;
 
-	dy += fontNormal.getFontHeight();
+	dy += fontNormal.getLineHeight();
 	fontNormal.drawString("The quick ", dx, dy);
 
-	dy += fontJapanese.getFontHeight();
+	dy += fontJapanese.getLineHeight();
 	fontJapanese.drawString("Ég get etið gler án þess að meiða mig.", dx, dy);
 
 	ofSetColor(ofColor::red);
-	dy += fontJapanese.getFontHeight();
+	dy += fontJapanese.getLineHeight();
 	fontJapanese.drawString("私はガラスを食べられます。それは私を傷つけません。", dx, dy);
 
 	ofPopStyle();
