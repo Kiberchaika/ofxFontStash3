@@ -1,15 +1,27 @@
 #ifndef MURKAFONTSTASH_H
 #define MURKAFONTSTASH_H
 
-FONScontext* glfonsCreate(int width, int height, int flags);
-void glfonsDelete(FONScontext* ctx);
-
-unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
+    FONS_DEF FONScontext* glfonsCreate(int width, int height, int flags);
+    FONS_DEF void glfonsDelete(FONScontext* ctx);
+    
+    FONS_DEF unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
 #ifdef MURKAFONTSTASH_IMPLEMENTATION
 #include "MurkaRendererBase.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct GLFONScontext {
 	MurkaRendererBase* renderer = nullptr;
@@ -129,7 +141,7 @@ static void glfons__renderDelete(void* userPtr)
 	free(context);
 }
 
-FONScontext* glfonsCreate(int width, int height, int flags)
+FONS_DEF FONScontext* glfonsCreate(int width, int height, int flags)
 {
 	FONSparams params;
 	GLFONScontext* context;
@@ -156,14 +168,19 @@ error:
 	return NULL;
 }
 
-void glfonsDelete(FONScontext* ctx)
+FONS_DEF void glfonsDelete(FONScontext* ctx)
 {
 	fonsDeleteInternal(ctx);
 }
 
-unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+FONS_DEF unsigned int glfonsRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
 	return (r) | (g << 8) | (b << 16) | (a << 24);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
