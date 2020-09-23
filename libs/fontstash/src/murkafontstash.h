@@ -103,7 +103,8 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 
 	context->renderer->pushStyle();
 	context->renderer->enableFill();
-	
+	context->renderer->enableAlphaBlending();
+
 	context->renderer->bind(*(context->img));
 
 	context->vbo->setVertexData((MurkaPoint*)verts, nverts, GL_DYNAMIC_DRAW);
