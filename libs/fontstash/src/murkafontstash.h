@@ -23,17 +23,17 @@ extern "C" {
 extern "C" {
 #endif
 
-struct GLFONScontext {
+struct MURKAFONScontext {
 	MurkaRendererBase* renderer = nullptr;
 	MurImage* img = nullptr;
 	MurVbo* vbo = nullptr;
 	int width, height;
 };
-typedef struct GLFONScontext GLFONScontext;
+typedef struct MURKAFONScontext MURKAFONScontext;
 
 static int glfons__renderCreate(void* userPtr, int width, int height)
 {
-	GLFONScontext* context = (GLFONScontext*)userPtr;
+	MURKAFONScontext* context = (MURKAFONScontext*)userPtr;
 	// Create may be called multiple times, delete existing texture.
 	if (context->img != 0) {
 		delete context->img;
@@ -64,7 +64,7 @@ static int glfons__renderResize(void* userPtr, int width, int height)
 
 static void glfons__renderUpdate(void* userPtr, int* rect, const unsigned char* data)
 {
-	GLFONScontext* context = (GLFONScontext*)userPtr;
+	MURKAFONScontext* context = (MURKAFONScontext*)userPtr;
 	int w = rect[2] - rect[0];
 	int h = rect[3] - rect[1];
 
@@ -92,7 +92,7 @@ ofFloatColor rgbaToOf(unsigned int& col)
 
 static void glfons__renderDraw(void* userPtr, const float* verts, const float* tcoords, const unsigned int* colors, int nverts)
 {
-	GLFONScontext* context = (GLFONScontext*)userPtr;
+	MURKAFONScontext* context = (MURKAFONScontext*)userPtr;
 	if (context->img == 0) return;
 
 	/*
@@ -106,9 +106,10 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 	context->renderer->enableAlphaBlending();
 
 	context->renderer->bind(*(context->img));
-
+	  
 	context->vbo->setVertexData((MurkaPoint*)verts, nverts, GL_DYNAMIC_DRAW);
 	context->vbo->setTexCoordData((MurkaPoint*)tcoords, nverts, GL_DYNAMIC_DRAW);
+
 	/*
 	vector<ofFloatColor> col;
 	col.resize(nverts);
@@ -127,7 +128,7 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 
 static void glfons__renderDelete(void* userPtr)
 {
-	GLFONScontext* context = (GLFONScontext*)userPtr;
+	MURKAFONScontext* context = (MURKAFONScontext*)userPtr;
 
 	if (context->img != 0) {
 		delete context->img;
@@ -145,11 +146,11 @@ static void glfons__renderDelete(void* userPtr)
 FONS_DEF FONScontext* glfonsCreate(int width, int height, int flags)
 {
 	FONSparams params;
-	GLFONScontext* context;
+	MURKAFONScontext* context;
 
-	context = (GLFONScontext*)malloc(sizeof(GLFONScontext));
+	context = (MURKAFONScontext*)malloc(sizeof(MURKAFONScontext));
 	if (context == NULL) goto error;
-	memset(context, 0, sizeof(GLFONScontext));
+	memset(context, 0, sizeof(MURKAFONScontext));
 
 	memset(&params, 0, sizeof(params));
 	params.width = width;

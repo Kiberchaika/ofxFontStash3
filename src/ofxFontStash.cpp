@@ -54,7 +54,7 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
     }
 
 #ifdef MURKA_OF
-	GLFONScontext* context = (GLFONScontext*)fs->params.userPtr;
+	MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
 	context->renderer = (MurkaRendererBase*)renderer;
 #endif
 
@@ -68,7 +68,7 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
     fonsClearState(fs);
     fonsSetFont(fs, font);
     fonsSetSize(fs, 1.6 * fontsize);
-    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_TOP);
     
     //fonsSetColor(fs, white);
     //fonsSetSpacing(fs, 5.0f);
@@ -83,12 +83,21 @@ float ofxFontStash::getLineHeight() {
 	if (font != FONS_INVALID) {
 		fonsVertMetrics(fs, NULL, NULL, &lh);
 	}
+#ifdef MURKA_OF
+	MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+	lh /= context->renderer->getScreenScale();
+#endif
 	return lh;
 }
 
  float ofxFontStash::stringWidth(const std::string & s) {
 	if (font != FONS_INVALID) {
-		return fonsTextBounds(fs, 0, 0, s.c_str(), NULL, NULL);
+		float width = fonsTextBounds(fs, 0, 0, s.c_str(), NULL, NULL);
+#ifdef MURKA_OF
+		MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+		width /= context->renderer->getScreenScale();
+#endif
+		return width;
 	}
 	return 0;
 }
@@ -96,9 +105,14 @@ float ofxFontStash::getLineHeight() {
  float ofxFontStash::stringHeight(const std::string & s) {
 	 float bounds[4] = { 0, 0, 0, 0 };
 	 if (font != FONS_INVALID) {
-		 fonsTextBounds(fs, 0, 0, s.c_str(), NULL, bounds);
+		 float height = fonsTextBounds(fs, 0, 0, s.c_str(), NULL, bounds);
+#ifdef MURKA_OF
+		 MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+		 height /= context->renderer->getScreenScale();
+#endif
+		 return height;
 	 }
-	 return bounds[3] - bounds[1]; // maxy - miny
+	 return 0; 
  }
 
  ofRectangle ofxFontStash::getStringBoundingBox(const string & s, float x, float y) {
@@ -106,6 +120,15 @@ float ofxFontStash::getLineHeight() {
 	 if (font != FONS_INVALID) {
 		 fonsTextBounds(fs, x, y, s.c_str(), NULL, bounds);
 	 }
+	 
+#ifdef MURKA_OF
+	 MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+	 bounds[0] /= context->renderer->getScreenScale();
+	 bounds[1] /= context->renderer->getScreenScale();
+	 bounds[2] /= context->renderer->getScreenScale();
+	 bounds[3] /= context->renderer->getScreenScale();
+#endif
+	
 	 return ofRectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
  }
 
@@ -131,6 +154,11 @@ float ofxFontStash::getLineHeight() {
 		 if (state->font < 0 || state->font >= fs->nfonts) return rects;
 		 font = fs->fonts[state->font];
 		 if (font->data == NULL) return rects;
+
+#ifdef MURKA_OF
+		 MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+		 isize /= context->renderer->getScreenScale();
+#endif
 
 		 scale = fons__tt_getPixelHeightScale(&font->font, (float)isize / 10.0f);
 
@@ -197,12 +225,27 @@ float ofxFontStash::getLineHeight() {
 		 }
 	 }
 
+#ifdef MURKA_OF
+	 MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+	 for (size_t i = 0; i < rects.size(); i++) {
+		 rects[i].x /= context->renderer->getScreenScale();
+		 rects[i].y /= context->renderer->getScreenScale();
+		 rects[i].height /= context->renderer->getScreenScale();
+		 rects[i].width /= context->renderer->getScreenScale();
+	 }
+#endif
+
 	 return rects;
  }
  
 
 void ofxFontStash::drawString(const string & s, float x, float y) {
 	if (font != FONS_INVALID) {
+#ifdef MURKA_OF
+		MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+		x *= context->renderer->getScreenScale();
+		y *= context->renderer->getScreenScale();
+#endif
 		fonsDrawText(fs, x, y, s.c_str(), NULL);
 	}
 }
