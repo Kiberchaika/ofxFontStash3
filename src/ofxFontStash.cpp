@@ -226,6 +226,7 @@ float ofxFontStash::getLineHeight() {
 	 }
 
 #ifdef MURKA_OF
+	 /*
 	 MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
 	 for (size_t i = 0; i < rects.size(); i++) {
 		 rects[i].x /= context->renderer->getScreenScale();
@@ -233,6 +234,7 @@ float ofxFontStash::getLineHeight() {
 		 rects[i].height /= context->renderer->getScreenScale();
 		 rects[i].width /= context->renderer->getScreenScale();
 	 }
+	 */
 #endif
 
 	 return rects;
