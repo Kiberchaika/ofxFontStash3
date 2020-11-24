@@ -97,9 +97,9 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 
 	/*
 	// debug
-	context->img->draw(0,0);
+	context->renderer->draw(*(context->img), 0, 0);
 	return;
-	*/
+	*/ 
 
 	context->renderer->pushStyle();
 	context->renderer->enableFill();
@@ -140,7 +140,7 @@ static void glfons__renderDelete(void* userPtr)
 		context->vbo = 0;
 	}
 
-	free(context);
+    free(context);
 }
 
 FONS_DEF FONScontext* glfonsCreate(int width, int height, int flags)

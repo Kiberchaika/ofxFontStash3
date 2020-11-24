@@ -77,6 +77,39 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
     bUseArb ? ofEnableArbTex() : ofDisableArbTex();
 }
 
+void ofxFontStash::updateTexture(void* renderer) {
+    if (fs) {
+#ifdef MURKA_OF
+        MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+        context->renderer = (MurkaRendererBase*)renderer;
+
+        bool bUseArb = ofGetUsingArbTex();
+        ofDisableArbTex();
+
+        fonsResetAtlas(fs, fs->params.width, fs->params.height);
+
+        bUseArb ? ofEnableArbTex() : ofDisableArbTex();
+#endif
+    }
+}
+
+void ofxFontStash::clearTexture() {
+    if (fs) {
+#ifdef MURKA_OF
+        MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
+        
+        if (context->img != 0) {
+            delete context->img;
+            context->img = 0;
+        }
+        
+        if (context->vbo != 0) {
+            delete context->vbo;
+            context->vbo = 0;
+        }
+#endif
+    }
+}
 
 float ofxFontStash::getLineHeight() {
 	float lh = 0;

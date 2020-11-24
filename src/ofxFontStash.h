@@ -29,6 +29,8 @@ public:
 	ofxFontStash& operator=(const ofxFontStash& obj);
 	
     void load(const filesystem::path &filename, float fontsize, bool isAbsolutePath = false, void* renderer = nullptr);
+    void updateTexture(void* renderer = nullptr);
+    void clearTexture();
 
 	float getLineHeight();
 	float stringWidth(const std::string& s);
