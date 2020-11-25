@@ -86,8 +86,16 @@ void ofxFontStash::updateTexture(void* renderer) {
         bool bUseArb = ofGetUsingArbTex();
         ofDisableArbTex();
 
-        fonsResetAtlas(fs, fs->params.width, fs->params.height);
-
+        //fonsResetAtlas(fs, fs->params.width, fs->params.height);
+        
+        if (context->img != 0) {
+            context->img->update();
+        }
+        
+        if (context->vbo != 0) {
+            context->vbo->update();
+        }
+        
         bUseArb ? ofEnableArbTex() : ofDisableArbTex();
 #endif
     }
@@ -99,13 +107,11 @@ void ofxFontStash::clearTexture() {
         MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
         
         if (context->img != 0) {
-            delete context->img;
-            context->img = 0;
+            context->img->clearTexture();
         }
         
         if (context->vbo != 0) {
-            delete context->vbo;
-            context->vbo = 0;
+            context->vbo->clear();
         }
 #endif
     }
