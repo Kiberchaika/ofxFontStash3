@@ -18,6 +18,7 @@ extern "C" {
 
 #ifdef MURKAFONTSTASH_IMPLEMENTATION
 #include "MurkaRendererBase.h"
+#include "MurkaRenderer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,10 +50,8 @@ static int glfons__renderCreate(void* userPtr, int width, int height)
 	context->height = height;
 
 	context->img = new MurImage();
-	context->img->allocate(width, height);
-	
 	context->vbo = new MurVbo();
-	
+
 	return 1;
 }
 
@@ -68,6 +67,24 @@ static void glfons__renderUpdate(void* userPtr, int* rect, const unsigned char* 
 	int w = rect[2] - rect[0];
 	int h = rect[3] - rect[1];
 
+	MurkaRenderer* renderer = (MurkaRenderer*)context->renderer;
+#if defined(MURKA_JUCE)
+	context->img->setOpenGLContext(renderer->getOpenGLContext());
+#endif
+
+	if (!context->img->isAllocated()) {
+		bool bUseArb = renderer->getUsingArbTex();
+		renderer->disableArbTex();
+		context->img->allocate(context->width, context->height);
+		bUseArb ? renderer->enableArbTex() : renderer->disableArbTex();
+	}
+
+#ifdef MURKA_JUCE
+	context->vbo->setOpenGLContext(renderer->getOpenGLContext());
+#endif
+	if (!context->vbo->isInited()) context->vbo->setup();
+
+
 	if (context->img == 0) return;
 
 	for (int y = 0; y < h; y++) {
@@ -79,7 +96,7 @@ static void glfons__renderUpdate(void* userPtr, int* rect, const unsigned char* 
 	context->img->update();
 }
 
-
+/*
 ofFloatColor rgbaToOf(unsigned int& col)
 {
 	ofFloatColor c;
@@ -89,6 +106,7 @@ ofFloatColor rgbaToOf(unsigned int& col)
 	c.r = (col >> 0 & 0xff) / 255.0;
 	return c;
 }
+*/
 
 static void glfons__renderDraw(void* userPtr, const float* verts, const float* tcoords, const unsigned int* colors, int nverts)
 {
@@ -97,6 +115,7 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 
 	/*
 	// debug
+	context->renderer->enableAlphaBlending();
 	context->renderer->draw(*(context->img), 0, 0);
 	return;
 	*/ 
@@ -106,19 +125,10 @@ static void glfons__renderDraw(void* userPtr, const float* verts, const float* t
 	context->renderer->enableAlphaBlending();
 
 	context->renderer->bind(*(context->img));
-	  
-	context->vbo->setVertexData((MurkaPoint*)verts, nverts, GL_DYNAMIC_DRAW);
-	context->vbo->setTexCoordData((MurkaPoint*)tcoords, nverts, GL_DYNAMIC_DRAW);
-
-	/*
-	vector<ofFloatColor> col;
-	col.resize(nverts);
-	for (int i = 0; i < nverts; i++)
-	{
-		col[i] = rgbaToOf(colors[i]);
-	}
-	context->vbo->setColorData(col.data(), nverts, GL_DYNAMIC_DRAW);
-	*/
+	 
+	context->vbo->setVertexData((MurkaPoint*)verts, nverts);
+	context->vbo->setTexCoordData((MurkaPoint*)tcoords, nverts);
+	context->vbo->update(GL_DYNAMIC_DRAW);
 
 	context->renderer->drawVbo(*(context->vbo), GL_TRIANGLES, 0, nverts);
 

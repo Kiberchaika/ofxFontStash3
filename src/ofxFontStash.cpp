@@ -42,8 +42,6 @@ ofxFontStash & ofxFontStash::operator=(const ofxFontStash & obj) {
 }
 
 void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool isAbsolutePath, void* renderer) {
-    bool bUseArb = ofGetUsingArbTex();
-    ofDisableArbTex();
     
     cleanup();
     
@@ -74,7 +72,6 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
     //fonsSetSpacing(fs, 5.0f);
     //fonsSetBlur(fs, 10.0f);
     
-    bUseArb ? ofEnableArbTex() : ofDisableArbTex();
 }
 
 void ofxFontStash::updateTexture(void* renderer) {
@@ -93,7 +90,7 @@ void ofxFontStash::updateTexture(void* renderer) {
         }
         
         if (context->vbo != 0) {
-            context->vbo->update();
+            context->vbo->update(GL_DYNAMIC_DRAW);
         }
         
         bUseArb ? ofEnableArbTex() : ofDisableArbTex();
