@@ -23,6 +23,12 @@ class ofxFontStash {
 
 public:
     
+	struct Rectangle {
+		float x;
+		float y;
+		float width;
+		float height;
+	};
     ofxFontStash();
     ~ofxFontStash();
     
@@ -35,10 +41,10 @@ public:
 	float getLineHeight();
 	float stringWidth(const std::string& s);
 	float stringHeight(const std::string& s);
-	ofRectangle getStringBoundingBox(const string &s, float x, float y);
+	Rectangle getStringBoundingBox(const string &s, float x, float y);
 
 	// custom function
-	vector<ofRectangle> getStringSymbolsBoundingBoxes(const string &s, float x, float y, bool needJoin = false);
+	vector<Rectangle> getStringSymbolsBoundingBoxes(const string &s, float x, float y, bool needJoin = false);
 
 	void drawString(const string &s, float x, float y);
 

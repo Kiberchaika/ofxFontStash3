@@ -169,8 +169,8 @@ float ofxFontStash::getLineHeight() {
  }
 
  
- vector<ofRectangle> ofxFontStash::getStringSymbolsBoundingBoxes(const string & s, float x, float y, bool needJoin) {
-	 vector<ofRectangle> rects;
+ vector<ofxFontStash::Rectangle> ofxFontStash::getStringSymbolsBoundingBoxes(const string & s, float x, float y, bool needJoin) {
+	 vector<ofxFontStash::Rectangle> rects;
 	 if (font != FONS_INVALID) {
 
 		 FONSstate* state = fons__getState(fs);
@@ -224,7 +224,7 @@ float ofxFontStash::getLineHeight() {
 					 if (q.y1 < miny) miny = q.y1;
 					 if (q.y0 > maxy) maxy = q.y0;
 				 }
-				 rects.push_back(ofRectangle(q.x0, q.y0, q.x1 - q.x0, q.y1 - q.y0));
+				 rects.push_back(ofxFontStash::Rectangle { q.x0, q.y0, q.x1 - q.x0, q.y1 - q.y0 });
 			 }
 			 prevGlyphIndex = glyph != NULL ? glyph->index : -1;
 		 }
