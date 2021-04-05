@@ -1,0 +1,3 @@
+[submodule "libs/fontstash"]
+	path = libs/fontstash
+	url = https://github.com/Kiberchaika/fontstash
