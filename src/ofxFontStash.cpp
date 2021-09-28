@@ -151,7 +151,7 @@ float ofxFontStash::getLineHeight() {
 	 return 0; 
  }
 
- ofRectangle ofxFontStash::getStringBoundingBox(const string & s, float x, float y) {
+ ofxFontStash::Rectangle ofxFontStash::getStringBoundingBox(const string & s, float x, float y) {
 	 float bounds[4] = { 0, 0, 0, 0 };
 	 if (font != FONS_INVALID) {
 		 fonsTextBounds(fs, x, y, s.c_str(), NULL, bounds);
@@ -165,7 +165,7 @@ float ofxFontStash::getLineHeight() {
 	 bounds[3] /= context->renderer->getScreenScale();
 #endif
 	
-	 return ofRectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
+	 return ofxFontStash::Rectangle{ bounds[0], bounds[1], bounds[2], bounds[3] };
  }
 
  
