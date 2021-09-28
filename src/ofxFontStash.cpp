@@ -53,7 +53,7 @@ void ofxFontStash::load(const filesystem::path & filename, float fontsize, bool 
 
 #ifdef MURKA_OF
 	MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
-	context->renderer = (MurkaRendererBase*)renderer;
+	context->renderer = (murka::MurkaRendererBase*)renderer;
 #endif
 
     string path = isAbsolutePath ? filename.string() : ofToDataPath(filename);
@@ -78,7 +78,7 @@ void ofxFontStash::updateTexture(void* renderer) {
     if (fs) {
 #ifdef MURKA_OF
         MURKAFONScontext* context = (MURKAFONScontext*)fs->params.userPtr;
-        context->renderer = (MurkaRendererBase*)renderer;
+        context->renderer = (murka::MurkaRendererBase*)renderer;
 
         bool bUseArb = ofGetUsingArbTex();
         ofDisableArbTex();
